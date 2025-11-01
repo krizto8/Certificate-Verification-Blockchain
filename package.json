@@ -1,0 +1,20 @@
+{
+  "name": "blockchain-certificate-verification",
+  "version": "1.0.0",
+  "description": "Decentralized Certificate Verification System on Ethereum",
+  "main": "index.js",
+  "scripts": {
+    "hardhat:compile": "cd contracts && npx hardhat compile",
+    "hardhat:test": "cd contracts && npx hardhat test",
+    "hardhat:node": "cd contracts && npx hardhat node",
+    "hardhat:deploy": "cd contracts && npx hardhat run scripts/deploy.js --network localhost",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:start": "cd backend && npm start",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "install:all": "npm install && cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install"
+  },
+  "keywords": ["blockchain", "ethereum", "certificate", "verification", "dapp"],
+  "author": "",
+  "license": "MIT"
+}
