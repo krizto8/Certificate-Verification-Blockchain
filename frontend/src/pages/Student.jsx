@@ -20,9 +20,14 @@ const Student = () => {
     setError('');
 
     try {
-      const contract = getContract(signer);
+      if (!signer) {
+        throw new Error('Wallet not connected');
+      }
+      const contract = await getContract(signer, true); // autoSwitchNetwork = true
+      console.log("contract", contract);
+      console.log("account", account);
       const certIds = await contract.getStudentCertificates(account);
-
+      console.log("certIds", certIds);
       const certDetails = [];
       for (let id of certIds) {
         const cert = await contract.getCertificateDetails(id);

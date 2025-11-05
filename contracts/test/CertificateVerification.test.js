@@ -53,12 +53,12 @@ describe("CertificateVerification", function () {
     });
 
     it("Should reject non-owner trying to add admin", async function () {
-      const { certificate, admin1, unauthorized } = await loadFixture(deployCertificateFixture);
-      
-      await expect(
-        certificate.connect(unauthorized).setAdmin(admin1.address, true)
-      ).to.be.revertedWithCustomError(certificate, "OwnableUnauthorizedAccount");
-    });
+  const { certificate, admin1, unauthorized } = await loadFixture(deployCertificateFixture);
+  
+  await expect(
+    certificate.connect(unauthorized).setAdmin(admin1.address, true)
+  ).to.be.revertedWith("Ownable: caller is not the owner");
+});
 
     it("Should reject zero address as admin", async function () {
       const { certificate, owner } = await loadFixture(deployCertificateFixture);

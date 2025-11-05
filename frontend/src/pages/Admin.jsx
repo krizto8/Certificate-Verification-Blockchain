@@ -85,8 +85,8 @@ const Admin = () => {
     setSuccess('');
 
     try {
-      const contract = getContract(signer);
-      
+      const contract = await getContract(signer);
+      console.log (contract);
       const tx = await contract.issueCertificate(
         formData.studentName,
         formData.courseName,

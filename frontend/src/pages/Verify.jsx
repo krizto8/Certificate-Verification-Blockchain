@@ -24,7 +24,7 @@ const Verify = () => {
 
     try {
       const provider = getProvider();
-      const contract = getContract(provider);
+      const contract = await getContract(provider);
 
       let isValid, certificate;
 
