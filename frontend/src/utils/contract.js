@@ -4,6 +4,9 @@ import { ethers } from 'ethers';
  * Get contract ABI
  * @returns {Array} Contract ABI
  */
+import contractABI from '../../../contracts/deployments/CertificateVerification-ABI.json';
+import contractInfo from '../../../contracts/deployments/sepolia.json';
+const SEPOLIA_CHAIN_ID = 11155111;
 export const getContractABI = () => {
   // This will be loaded from the deployed contract
   // For now, we'll define the essential functions
@@ -28,7 +31,7 @@ export const getContractABI = () => {
  * @returns {string} Contract address
  */
 export const getContractAddress = () => {
-  const address = import.meta.env.VITE_CONTRACT_ADDRESS;
+  const address = contractInfo?.contractAddress || contractInfo?.address || "0xc77212B7cb9E0550c6683780C33c6BE34694029B";
   if (!address) {
     throw new Error('Contract address not configured. Please set VITE_CONTRACT_ADDRESS in .env file');
   }
@@ -40,12 +43,44 @@ export const getContractAddress = () => {
  * @param {Object} signer - Ethers signer
  * @returns {Object} Contract instance
  */
-export const getContract = (signer) => {
-  const address = getContractAddress();
-  const abi = getContractABI();
-  return new ethers.Contract(address, abi, signer);
-};
+export const getContract =async (signerOrProvider = false) => {
+  try {
+    // Get contract address - use contractAddress from JSON
+    const contractAddress = contractInfo?.contractAddress || contractInfo?.address || getContractAddress();
+    console.log("Using contract address:", contractAddress);
+    if (!contractAddress) {
+      throw new Error('Contract address not configured');
+    }
 
+    // If signerOrProvider is a signer or provider object, use it directly
+    if (signerOrProvider && typeof signerOrProvider !== 'boolean') {
+      // It's a signer or provider object
+      return new ethers.Contract(contractAddress, contractABI, signerOrProvider);
+    }
+
+    // Original behavior: if boolean or no argument, use window.ethereum
+    if (!window.ethereum) {
+      throw new Error('MetaMask not installed');
+    }
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      provider
+    );
+
+    if (signerOrProvider === true) {
+      // Return a promise that resolves with connected contract
+      return provider.getSigner().then(signer => contract.connect(signer));
+    }
+
+    return contract;
+  } catch (error) {
+    console.error('Contract connection failed:', error);
+    throw error;
+  }
+};
 /**
  * Get contract instance with provider (read-only)
  * @param {Object} provider - Ethers provider

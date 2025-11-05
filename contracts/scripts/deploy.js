@@ -52,21 +52,30 @@ async function main() {
   console.log(`ABI saved to: ${abiFile}`);
   
   // Verify contract on Etherscan (only on testnets/mainnet)
-  if (hre.network.name !== "localhost" && hre.network.name !== "hardhat") {
-    console.log("Waiting for block confirmations...");
-    await certificateVerification.deploymentTransaction().wait(6);
-    
-    console.log("Verifying contract on Etherscan...");
-    try {
-      await hre.run("verify:verify", {
-        address: contractAddress,
-        constructorArguments: [],
-      });
-      console.log("Contract verified successfully");
-    } catch (error) {
-      console.log("Verification failed:", error.message);
-    }
+  // Add this helper function at the top
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// In your verification section:
+if (hre.network.name !== "localhost" && hre.network.name !== "hardhat") {
+  console.log("Waiting for block confirmations...");
+  await certificateVerification.deploymentTransaction().wait(6);
+  
+  // Add delay before verification
+  console.log("Waiting 30 seconds before verification...");
+  await delay(30000); // 30 seconds delay
+  
+  console.log("Verifying contract on Etherscan...");
+  try {
+    await hre.run("verify:verify", {
+      address: contractAddress,
+      constructorArguments: [],
+      contract: "contracts/CertificateVerification.sol:CertificateVerification"
+    });
+    console.log("Contract verified successfully");
+  } catch (error) {
+    console.log("Verification failed:", error.message);
   }
+}
   
   console.log("\n=== Deployment Summary ===");
   console.log(`Network: ${hre.network.name}`);

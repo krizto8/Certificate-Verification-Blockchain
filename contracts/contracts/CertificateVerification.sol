@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @title CertificateVerification
@@ -84,7 +84,7 @@ contract CertificateVerification is Ownable {
     /**
      * @dev Constructor - sets the contract deployer as owner and first admin
      */
-    constructor() Ownable(msg.sender) {
+    constructor() Ownable() {
         authorizedAdmins[msg.sender] = true;
         emit AdminUpdated(msg.sender, true);
     }
@@ -243,3 +243,4 @@ contract CertificateVerification is Ownable {
         return authorizedAdmins[admin] || admin == owner();
     }
 }
+
